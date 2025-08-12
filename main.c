@@ -23,8 +23,9 @@ void cpu_info() {
     *(int*)&vendor[8] = cpuInfo[2]; // ECX
     vendor[12] = '\0';
 
-    printf("������������� CPU: %s\n", vendor);
+    printf("Производитель CPU: %s\n", vendor);
 
+    
     __cpuid(cpuInfo, 0x80000000);
     unsigned int maxExtId = cpuInfo[0];
 
@@ -39,12 +40,13 @@ void cpu_info() {
             modelPtr += 4;
         }
         model[48] = '\0';
-        printf("������ CPU: %s\n", model);
+        printf("Модель CPU: %s\n", model);
     }
 
+    
     SYSTEM_INFO sysInfo;
     GetSystemInfo(&sysInfo);
-    printf("���������� ����: %u\n", sysInfo.dwNumberOfProcessors);
+    printf("Логических ядер: %u\n", sysInfo.dwNumberOfProcessors);
     return main();
 }
 
@@ -53,11 +55,11 @@ void mem_Info() {
     statex.dwLength = sizeof(statex);
 
     if (GlobalMemoryStatusEx(&statex)) {
-        printf("����� ����� ���: %llu ��\n", statex.ullTotalPhys / (1024 * 1024));
+        printf("Общий объем ОЗУ: %llu МБ\n", statex.ullTotalPhys / (1024 * 1024));
         return main();
     }
     else {
-        printf("������ ��������� ����������\n");
+        printf("Ошибка получения информации\n");
     }
    
 }
@@ -66,7 +68,7 @@ void gpu_info() {
     IDXGIFactory* pFactory = NULL;
     HRESULT hr = CreateDXGIFactory(&IID_IDXGIFactory, (void**)&pFactory);
     if (FAILED(hr)) {
-        printf("������: �� ������� ������� DXGI Factory\n");
+        printf("Ошибка: не удалось создать DXGI Factory\n");
         return;
     }
 
@@ -76,13 +78,13 @@ void gpu_info() {
         DXGI_ADAPTER_DESC desc;
         hr = pAdapter->lpVtbl->GetDesc(pAdapter, &desc);
         if (SUCCEEDED(hr)) {
-            wprintf(L"������������� GPU: %s\n", desc.Description);
-            printf("�����������: %llu ��\n", desc.DedicatedVideoMemory / (1024 * 1024));
+            wprintf(L"Производитель GPU: %s\n", desc.Description);
+            printf("Видеопамять: %llu МБ\n", desc.DedicatedVideoMemory / (1024 * 1024));
         }
         pAdapter->lpVtbl->Release(pAdapter);
     }
     else {
-        printf("������: �� ������� �������� ������� GPU\n");
+        printf("Ошибка: не удалось получить адаптер GPU\n");
     }
 
     pFactory->lpVtbl->Release(pFactory);
@@ -92,17 +94,17 @@ void gpu_info() {
 int main() {
     setlocale(LC_ALL, "Russian");
 
-    printf("������� ��� �� ������ ����������\n1.���������\t2.���������� ������\t3.������ ����������\t0.�����\n");
+    printf("Введите что вы хотите посмотреть\n1.Процессор\t2.Количество оперативной памяти\t3.Модель видеокарты\t0.Выход\n");
     scanf_s("%d", &Switch);
 
     switch (Switch)
     {
     case 0: return 0;
-    case 1:mem_Info();break;
-    case 2: cpu_info(); break;
+    case 1:cpu_info(); break;
+    case 2:mem_Info(); break;
     case 3: gpu_info(); break;
     default:
-        printf("������������ �����\n"); return main();
+        printf("Некорректный выбор\n"); return main();
         break;
     }
     
