@@ -50,7 +50,6 @@ void cpu_info() {
         printf("Модель CPU: %s\n", model);
     }
 
-
     SYSTEM_INFO sysInfo;
     GetSystemInfo(&sysInfo);
     printf("Логических ядер: %u\n", sysInfo.dwNumberOfProcessors);
@@ -82,8 +81,6 @@ void gpu_info() {
         return;
     }
 
-    
-
     IDXGIAdapter* pAdapter = NULL;
     hr = pFactory->lpVtbl->EnumAdapters(pFactory, 0, &pAdapter);
     if (SUCCEEDED(hr)) {
@@ -113,9 +110,9 @@ int main() {
     switch (Switch)
     {
     case 0: return 0;
-    case 1:cpu_info(); break;
-    case 2:mem_Info(); break;
-    case 3: gpu_info(); break;
+    case 1:cpu_info();break;
+    case 2:mem_Info();break;
+    case 3:gpu_info();break;
     default: space();
         printf("Некорректный выбор\n"); return main();
         break;
