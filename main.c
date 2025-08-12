@@ -15,17 +15,24 @@ int Switch; int cpuInfo[4];
 char vendor[13];char model[49];
 
 
+void space() {
+    for (int i = 0; i < 100; i++) {
+        printf("\n");
+    }
+}
+
 void cpu_info() {
- 
+
     __cpuid(cpuInfo, 0);
     *(int*)&vendor[0] = cpuInfo[1]; // EBX
     *(int*)&vendor[4] = cpuInfo[3]; // EDX
     *(int*)&vendor[8] = cpuInfo[2]; // ECX
     vendor[12] = '\0';
+    
+    space();
 
     printf("Производитель CPU: %s\n", vendor);
 
-    
     __cpuid(cpuInfo, 0x80000000);
     unsigned int maxExtId = cpuInfo[0];
 
@@ -43,10 +50,11 @@ void cpu_info() {
         printf("Модель CPU: %s\n", model);
     }
 
-    
+
     SYSTEM_INFO sysInfo;
     GetSystemInfo(&sysInfo);
     printf("Логических ядер: %u\n", sysInfo.dwNumberOfProcessors);
+   
     return main();
 }
 
@@ -55,6 +63,7 @@ void mem_Info() {
     statex.dwLength = sizeof(statex);
 
     if (GlobalMemoryStatusEx(&statex)) {
+        space();
         printf("Общий объем ОЗУ: %llu МБ\n", statex.ullTotalPhys / (1024 * 1024));
         return main();
     }
@@ -67,10 +76,13 @@ void mem_Info() {
 void gpu_info() {
     IDXGIFactory* pFactory = NULL;
     HRESULT hr = CreateDXGIFactory(&IID_IDXGIFactory, (void**)&pFactory);
+    
     if (FAILED(hr)) {
         printf("Ошибка: не удалось создать DXGI Factory\n");
         return;
     }
+
+    
 
     IDXGIAdapter* pAdapter = NULL;
     hr = pFactory->lpVtbl->EnumAdapters(pFactory, 0, &pAdapter);
@@ -78,6 +90,7 @@ void gpu_info() {
         DXGI_ADAPTER_DESC desc;
         hr = pAdapter->lpVtbl->GetDesc(pAdapter, &desc);
         if (SUCCEEDED(hr)) {
+            space();
             wprintf(L"Производитель GPU: %s\n", desc.Description);
             printf("Видеопамять: %llu МБ\n", desc.DedicatedVideoMemory / (1024 * 1024));
         }
@@ -94,7 +107,7 @@ void gpu_info() {
 int main() {
     setlocale(LC_ALL, "Russian");
 
-    printf("Введите что вы хотите посмотреть\n1.Процессор\t2.Количество оперативной памяти\t3.Модель видеокарты\t0.Выход\n");
+    printf("\t\t\t\t\tВведите что вы хотите посмотреть\n\t1.Процессор\t\t2.Количество оперативной памяти\t\t3.Модель видеокарты\t0.Выход\n");
     scanf_s("%d", &Switch);
 
     switch (Switch)
@@ -103,7 +116,7 @@ int main() {
     case 1:cpu_info(); break;
     case 2:mem_Info(); break;
     case 3: gpu_info(); break;
-    default:
+    default: space();
         printf("Некорректный выбор\n"); return main();
         break;
     }
